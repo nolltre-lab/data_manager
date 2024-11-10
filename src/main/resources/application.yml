@@ -1,0 +1,5 @@
+# File: src/main/resources/application.yml
+
+stock:
+  score:
+    threshold: 5.0
