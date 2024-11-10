@@ -1,13 +1,19 @@
 // File: src/main/java/se/iqesolutions/datamanager/provider/FinnishStockDataProvider.java
 
-package se.iqesolutions.datamanager.provider;
+package se.iqesolutions.datamanager.provider.impl;
 
+import org.springframework.stereotype.Component;
 import se.iqesolutions.datamanager.constraints.DataProductConstraint;
 import se.iqesolutions.datamanager.product.*;
+import se.iqesolutions.datamanager.product.impl.Country;
+import se.iqesolutions.datamanager.product.impl.RealTimeSharePrice;
+import se.iqesolutions.datamanager.product.impl.TickerSymbol;
+import se.iqesolutions.datamanager.provider.DataProvider;
 
 import java.math.BigDecimal;
 import java.util.*;
 
+@Component
 public class FinnishStockDataProvider implements DataProvider {
 
     @Override
@@ -30,7 +36,7 @@ public class FinnishStockDataProvider implements DataProvider {
 
     @Override
     public double getExpectedTime(Class<? extends DataProduct> dataProduct) {
-        return 1.0; // Same or similar to existing provider
+        return 2.0; // Same or similar to existing provider
     }
 
     @Override

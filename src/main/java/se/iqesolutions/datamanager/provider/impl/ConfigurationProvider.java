@@ -1,11 +1,13 @@
 // File: src/main/java/se/iqesolutions/datamanager/provider/ConfigurationProvider.java
 
-package se.iqesolutions.datamanager.provider;
+package se.iqesolutions.datamanager.provider.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import se.iqesolutions.datamanager.product.*;
 import se.iqesolutions.datamanager.constraints.DataProductConstraint;
+import se.iqesolutions.datamanager.product.impl.Configuration;
+import se.iqesolutions.datamanager.provider.DataProvider;
 
 import java.util.*;
 

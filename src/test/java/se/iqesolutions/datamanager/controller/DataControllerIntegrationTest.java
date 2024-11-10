@@ -12,9 +12,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import se.iqesolutions.datamanager.DataManagerResponse;
 import se.iqesolutions.datamanager.product.DataProduct;
-import se.iqesolutions.datamanager.product.RealTimeSharePrice;
-import se.iqesolutions.datamanager.product.StockScore;
-import se.iqesolutions.datamanager.product.TickerSymbol;
+import se.iqesolutions.datamanager.product.impl.RealTimeSharePrice;
+import se.iqesolutions.datamanager.product.impl.TickerSymbol;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -33,9 +32,9 @@ public class DataControllerIntegrationTest {
         String requestJson = """
         {
           "requestedDataProducts": {
-            "se.iqesolutions.datamanager.product.RealTimeSharePrice": {
+            "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice": {
               "acceptableMethods": ["REAL_TIME_FEED"],
-              "cacheKey": "se.iqesolutions.datamanager.product.TickerSymbol",
+              "cacheKey": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
               "maxCacheAgeSeconds": 0,
               "maxCost": 1.0,
               "maxTime": 5.0
@@ -43,7 +42,7 @@ public class DataControllerIntegrationTest {
           },
           "alreadyAvailableDataProducts": [
             {
-              "@class": "se.iqesolutions.datamanager.product.TickerSymbol",
+              "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
               "symbol": "AAPL"
             }
           ]
@@ -72,9 +71,9 @@ public class DataControllerIntegrationTest {
         String requestJson = """
         {
           "requestedDataProducts": {
-            "se.iqesolutions.datamanager.product.RealTimeSharePrice": {
+            "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice": {
               "acceptableMethods": ["REAL_TIME_FEED"],
-              "cacheKey": "se.iqesolutions.datamanager.product.TickerSymbol",
+              "cacheKey": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
               "maxCacheAgeSeconds": 0,
               "maxCost": 1.0,
               "maxTime": 5.0
@@ -96,9 +95,9 @@ public class DataControllerIntegrationTest {
         String responseBody = response.getBody();
         assertNotNull(responseBody);
         // Both TickerSymbol and RealTimeSharePrice should fail
-        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.TickerSymbol"));
+        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.impl.TickerSymbol"));
         assertTrue(responseBody.contains("No provider available or dependencies not satisfied"));
-        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.RealTimeSharePrice"));
+        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.impl.RealTimeSharePrice"));
     }
 
     @Test
@@ -106,7 +105,7 @@ public class DataControllerIntegrationTest {
         String requestJson = """
         {
           "requestedDataProducts": {
-            "se.iqesolutions.datamanager.product.UnsupportedDataProduct": {
+            "se.iqesolutions.datamanager.product.impl.UnsupportedDataProduct": {
               "acceptableMethods": ["REAL_TIME_FEED"],
               "cacheKey": "",
               "maxCacheAgeSeconds": 0,
@@ -130,7 +129,7 @@ public class DataControllerIntegrationTest {
         String responseBody = response.getBody();
         assertNotNull(responseBody);
         // UnsupportedDataProduct should fail
-        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.UnsupportedDataProduct"));
+        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.impl.UnsupportedDataProduct"));
         assertTrue(responseBody.contains("No provider available or dependencies not satisfied"));
     }
 
@@ -186,9 +185,9 @@ public class DataControllerIntegrationTest {
         String requestJson = """
         {
           "requestedDataProducts": {
-            "se.iqesolutions.datamanager.product.RealTimeSharePrice": {
+            "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice": {
               "acceptableMethods": ["USER_INPUT"],
-              "cacheKey": "se.iqesolutions.datamanager.product.TickerSymbol",
+              "cacheKey": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
               "maxCacheAgeSeconds": 0,
               "maxCost": 0.001,
               "maxTime": 0.001
@@ -196,7 +195,7 @@ public class DataControllerIntegrationTest {
           },
           "alreadyAvailableDataProducts": [
             {
-              "@class": "se.iqesolutions.datamanager.product.TickerSymbol",
+              "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
               "symbol": "AAPL"
             }
           ]
@@ -215,7 +214,7 @@ public class DataControllerIntegrationTest {
         String responseBody = response.getBody();
         assertNotNull(responseBody);
         // Constraint violation should cause RealTimeSharePrice to fail
-        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.RealTimeSharePrice"));
+        assertTrue(responseBody.contains("se.iqesolutions.datamanager.product.impl.RealTimeSharePrice"));
         assertTrue(responseBody.contains("No provider available or dependencies not satisfied"));
     }
 
@@ -224,7 +223,7 @@ public class DataControllerIntegrationTest {
         String requestJson = """
     {
       "requestedDataProducts": {
-        "se.iqesolutions.datamanager.product.StockScore": {
+        "se.iqesolutions.datamanager.product.impl.StockScore": {
           "acceptableMethods": ["CALCULATION"],
           "cacheKey": "",
           "maxCacheAgeSeconds": 0,
@@ -234,7 +233,7 @@ public class DataControllerIntegrationTest {
       },
       "alreadyAvailableDataProducts": [
         {
-          "@class": "se.iqesolutions.datamanager.product.TickerSymbol",
+          "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
           "symbol": "AAPL"
         }
       ]
@@ -264,16 +263,16 @@ public class DataControllerIntegrationTest {
 
         // Map data products to their dependencies
         Map<String, List<String>> dependenciesMap = new HashMap<>();
-        dependenciesMap.put("se.iqesolutions.datamanager.product.StockScore", Arrays.asList(
-                "se.iqesolutions.datamanager.product.RealTimeSharePrice",
-                "se.iqesolutions.datamanager.product.LastReportedEarningsPerShare",
-                "se.iqesolutions.datamanager.product.Configuration",
-                "se.iqesolutions.datamanager.product.Country"
+        dependenciesMap.put("se.iqesolutions.datamanager.product.impl.StockScore", Arrays.asList(
+                "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice",
+                "se.iqesolutions.datamanager.product.impl.LastReportedEarningsPerShare",
+                "se.iqesolutions.datamanager.product.impl.Configuration",
+                "se.iqesolutions.datamanager.product.impl.Country"
         ));
-        dependenciesMap.put("se.iqesolutions.datamanager.product.RealTimeSharePrice", Collections.emptyList());
-        dependenciesMap.put("se.iqesolutions.datamanager.product.LastReportedEarningsPerShare", Collections.emptyList());
-        dependenciesMap.put("se.iqesolutions.datamanager.product.Configuration", Collections.emptyList());
-        dependenciesMap.put("se.iqesolutions.datamanager.product.Country", Collections.emptyList());
+        dependenciesMap.put("se.iqesolutions.datamanager.product.impl.RealTimeSharePrice", Collections.emptyList());
+        dependenciesMap.put("se.iqesolutions.datamanager.product.impl.LastReportedEarningsPerShare", Collections.emptyList());
+        dependenciesMap.put("se.iqesolutions.datamanager.product.impl.Configuration", Collections.emptyList());
+        dependenciesMap.put("se.iqesolutions.datamanager.product.impl.Country", Collections.emptyList());
         // Add other data products if necessary
 
         // Build a map of data product to its index in the collected list
@@ -311,7 +310,7 @@ public class DataControllerIntegrationTest {
         String requestJson = """
     {
       "requestedDataProducts": {
-        "se.iqesolutions.datamanager.product.LastReportedEarningsPerShare": {
+        "se.iqesolutions.datamanager.product.impl.LastReportedEarningsPerShare": {
           "acceptableMethods": ["REAL_TIME_FEED"],
           "cacheKey": "",
           "maxCacheAgeSeconds": 0,
@@ -321,7 +320,7 @@ public class DataControllerIntegrationTest {
       },
       "alreadyAvailableDataProducts": [
         {
-          "@class": "se.iqesolutions.datamanager.product.TickerSymbol",
+          "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
           "symbol": "AAPL"
         }
       ]
@@ -354,8 +353,8 @@ public class DataControllerIntegrationTest {
         // LastReportedEarningsPerShare should fail due to cost constraint violation
         Map<String, String> failedDataProducts = dataManagerResponse.failedDataProducts();
         assertEquals(1, failedDataProducts.size());
-        assertTrue(failedDataProducts.containsKey("se.iqesolutions.datamanager.product.LastReportedEarningsPerShare"));
-        assertTrue(failedDataProducts.get("se.iqesolutions.datamanager.product.LastReportedEarningsPerShare").contains("No provider available or dependencies not satisfied"));
+        assertTrue(failedDataProducts.containsKey("se.iqesolutions.datamanager.product.impl.LastReportedEarningsPerShare"));
+        assertTrue(failedDataProducts.get("se.iqesolutions.datamanager.product.impl.LastReportedEarningsPerShare").contains("No provider available or dependencies not satisfied"));
     }
 
     @Test
@@ -363,7 +362,7 @@ public class DataControllerIntegrationTest {
         String requestJson = """
     {
       "requestedDataProducts": {
-        "se.iqesolutions.datamanager.product.RealTimeSharePrice": {
+        "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice": {
           "acceptableMethods": ["REAL_TIME_FEED"],
           "cacheKey": "",
           "maxCacheAgeSeconds": 0,
@@ -373,7 +372,7 @@ public class DataControllerIntegrationTest {
       },
       "alreadyAvailableDataProducts": [
         {
-          "@class": "se.iqesolutions.datamanager.product.TickerSymbol",
+          "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
           "symbol": "NOK"
         }
       ]
@@ -413,4 +412,132 @@ public class DataControllerIntegrationTest {
         // Ensure there are no failed data products
         assertTrue(dataManagerResponse.failedDataProducts().isEmpty());
     }
+
+    @Test
+    public void testCollectData_PrioritizeCost() throws Exception {
+        String requestJson = """
+        {
+          "requestedDataProducts": {
+            "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice": {
+              "acceptableMethods": ["REAL_TIME_FEED"],
+              "cacheKey": "",
+              "maxCacheAgeSeconds": 0,
+              "maxCost": 1.0,
+              "maxTime": 10.0,
+              "costWeight": 0.9,
+              "timeWeight": 0.1
+            }
+          },
+          "alreadyAvailableDataProducts": [
+            {
+              "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
+              "symbol": "NOK"
+            },
+            {
+              "@class": "se.iqesolutions.datamanager.product.impl.Country",
+              "name": "Finland"
+            }
+          ]
+        }
+        """;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity("/data/collect", entity, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+
+        // Parse the response
+        ObjectMapper objectMapper = new ObjectMapper();
+        DataManagerResponse dataManagerResponse = objectMapper.readValue(responseBody, DataManagerResponse.class);
+
+        // Assert that RealTimeSharePrice is collected
+        boolean sharePriceCollected = dataManagerResponse.collectedDataProducts().stream()
+                .anyMatch(dp -> dp instanceof RealTimeSharePrice);
+        assertTrue(sharePriceCollected);
+
+        // Verify that the price matches the Finnish provider's value
+        dataManagerResponse.collectedDataProducts().stream()
+                .filter(dp -> dp instanceof RealTimeSharePrice)
+                .map(dp -> (RealTimeSharePrice) dp)
+                .forEach(sharePrice -> {
+                    assertEquals("NOK", sharePrice.tickerSymbol());
+                    assertEquals(BigDecimal.valueOf(50.0), sharePrice.price());
+                });
+
+        // Ensure there are no failed data products
+        assertTrue(dataManagerResponse.failedDataProducts().isEmpty());
+    }
+
+    @Test
+    public void testCollectData_PrioritizeTime() throws Exception {
+        String requestJson = """
+        {
+          "requestedDataProducts": {
+            "se.iqesolutions.datamanager.product.impl.RealTimeSharePrice": {
+              "acceptableMethods": ["REAL_TIME_FEED"],
+              "cacheKey": "",
+              "maxCacheAgeSeconds": 0,
+              "maxCost": 1.0,
+              "maxTime": 10.0,
+              "costWeight": 0.1,
+              "timeWeight": 0.9
+            }
+          },
+          "alreadyAvailableDataProducts": [
+            {
+              "@class": "se.iqesolutions.datamanager.product.impl.TickerSymbol",
+              "symbol": "NOK"
+            },
+            {
+              "@class": "se.iqesolutions.datamanager.product.impl.Country",
+              "name": "Finland"
+            }
+          ]
+        }
+        """;
+
+        // Assuming RealTimeStockDataFeedProvider has lower expectedTime than FinnishStockDataProvider
+        // Adjust providers' expected times accordingly in your provider implementations
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity("/data/collect", entity, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        String responseBody = response.getBody();
+        assertNotNull(responseBody);
+
+        // Parse the response
+        ObjectMapper objectMapper = new ObjectMapper();
+        DataManagerResponse dataManagerResponse = objectMapper.readValue(responseBody, DataManagerResponse.class);
+
+        // Assert that RealTimeSharePrice is collected
+        boolean sharePriceCollected = dataManagerResponse.collectedDataProducts().stream()
+                .anyMatch(dp -> dp instanceof RealTimeSharePrice);
+        assertTrue(sharePriceCollected);
+
+        // Verify that the price matches the provider with lower time (assuming it's 100.0 from RealTimeStockDataFeedProvider)
+        dataManagerResponse.collectedDataProducts().stream()
+                .filter(dp -> dp instanceof RealTimeSharePrice)
+                .map(dp -> (RealTimeSharePrice) dp)
+                .forEach(sharePrice -> {
+                    assertEquals("NOK", sharePrice.tickerSymbol());
+                    assertEquals(BigDecimal.valueOf(100.0), sharePrice.price());
+                });
+
+        // Ensure there are no failed data products
+        assertTrue(dataManagerResponse.failedDataProducts().isEmpty());
+    }
+
 }

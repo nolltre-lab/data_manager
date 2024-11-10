@@ -1,7 +1,10 @@
+// File: src/main/java/se/iqesolutions/datamanager/service/DataManagerService.java
+
 package se.iqesolutions.datamanager.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.iqesolutions.datamanager.DataManagerRequest;
 import se.iqesolutions.datamanager.DataManagerResponse;
@@ -15,11 +18,12 @@ import java.util.*;
 public class DataManagerService {
     private static final Logger logger = LoggerFactory.getLogger(DataManagerService.class);
 
-    private final List<DataProvider> dataProviders = new ArrayList<>();
+    private final List<DataProvider> dataProviders;
 
-    // Register data providers
-    public void registerDataProvider(DataProvider dataProvider) {
-        dataProviders.add(dataProvider);
+    // Use constructor injection to inject all DataProvider beans
+    @Autowired
+    public DataManagerService(List<DataProvider> dataProviders) {
+        this.dataProviders = dataProviders;
     }
 
     // Plan and execute data collection
@@ -118,8 +122,20 @@ public class DataManagerService {
             }
         }
 
-        // Sort providers based on expected cost
-        supportingProviders.sort(Comparator.comparingDouble(p -> p.getExpectedCost(dataProductClass)));
+        // Sort providers based on weighted score
+        supportingProviders.sort(Comparator.comparingDouble(p -> {
+            double cost = p.getExpectedCost(dataProductClass);
+            double time = p.getExpectedTime(dataProductClass);
+            double costWeight = (constraint != null) ? constraint.costWeight() : 1.0;
+            double timeWeight = (constraint != null) ? constraint.timeWeight() : 1.0;
+            // Normalize weights if both are zero to avoid division by zero
+            if (costWeight == 0 && timeWeight == 0) {
+                costWeight = 1.0;
+                timeWeight = 1.0;
+            }
+            // Calculate weighted score
+            return (cost * costWeight) + (time * timeWeight);
+        }));
 
         for (DataProvider provider : supportingProviders) {
             // Check if provider's methods align with acceptable methods in constraints
