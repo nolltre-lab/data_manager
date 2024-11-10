@@ -1,22 +1,29 @@
-// File: src/main/java/se/iqesolutions/datamanager/constraints/DataProductConstraint.java
-
 package se.iqesolutions.datamanager.constraints;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record DataProductConstraint(
+        @NotNull @Size(min = 1)
         List<String> acceptableMethods,
+
         String cacheKey,
+
+        @Min(0)
         int maxCacheAgeSeconds,
+
+        @Min(0)
         double maxCost,
+
+        @Min(0)
         double maxTime,
+
+        @Min(0)
         double costWeight,
+
+        @Min(0)
         double timeWeight
 ) {
-    public DataProductConstraint {
-        // Validation: Ensure weights are non-negative
-        if (costWeight < 0 || timeWeight < 0) {
-            throw new IllegalArgumentException("Cost weight and time weight must be non-negative");
-        }
-    }
 }

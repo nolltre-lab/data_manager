@@ -2,12 +2,14 @@
 
 package se.iqesolutions.datamanager.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import se.iqesolutions.datamanager.*;
-import se.iqesolutions.datamanager.provider.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import jakarta.annotation.PostConstruct;
+
 import se.iqesolutions.datamanager.service.DataManagerService;
 
 @RestController
@@ -18,7 +20,15 @@ public class DataController {
     private DataManagerService dataManagerService;
 
     @PostMapping("/collect")
-    public DataManagerResponse collectData(@RequestBody DataManagerRequest request) {
+    @Operation(
+            summary = "Collect Data",
+            description = "Collect data products based on the provided request",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful operation"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data")
+            }
+    )
+    public DataManagerResponse collectData(@Valid @RequestBody DataManagerRequest request) {
         return dataManagerService.collectDataProducts(request);
     }
 }

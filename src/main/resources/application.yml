@@ -3,3 +3,6 @@
 stock:
   score:
     threshold: 5.0
+
+server:
+  port: 8081  # Replace 8081 with your desired port number
